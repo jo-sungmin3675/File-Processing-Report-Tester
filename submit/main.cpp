@@ -21,32 +21,31 @@ template <class _Tp> class BST;
 
 template <class _Tp>
 class Node {
-	public: // Member types
-		typedef _Tp					__key_type;
-		typedef Node<__key_type>*	__node_pointer_type;
-	
-	public: // Member variables
-		__key_type			__key_;
-		__node_pointer_type	__left_;
-		__node_pointer_type	__right_;
-	
-	public: // Constructor
-		Node(): __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
-		Node(const __key_type& key): __key_(key), __left_(nullptr), __right_(nullptr) {}
+public: // Member types
+	typedef _Tp					__key_type;
+	typedef Node<__key_type>* __node_pointer_type;
+
+public: // Member variables
+	__key_type			__key_;
+	__node_pointer_type	__left_;
+	__node_pointer_type	__right_;
+
+public: // Constructor
+	Node() : __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
+	Node(const __key_type& key) : __key_(key), __left_(nullptr), __right_(nullptr) {}
+	Node(Node& root) : __key_(root.__key_), __left_(root.__left_), __right_(root.__right_) {}
 };
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
-	Node<size_t> __p;
-	__p = __x;
+	Node<size_t> __p(__x);
 	if (__p == nullptr) return 0;
 	return max(__height(__p.__left_) + 1, __height(__p.__right_) + 1);
 }
 
 template <class _NodePtr>
 unsigned __size(_NodePtr __x) {
-	Node<size_t> __p;
-	__p = __x;
+	Node<size_t> __p(__x);
 	if (__p == nullptr) return 0;
 	return 1 + __size(__p.__left_) + __size(__p.__right_);
 }
@@ -57,8 +56,7 @@ unsigned __size(_NodePtr __x) {
 */
 template <class _NodePtr>
 void __inorder(_NodePtr __x) {
-	Node<size_t> __p;
-	__p = __x;
+	Node<size_t> __p(__x);
 	if (__p == nullptr) return;
 	cout << "<";
 	__inorder(__p.__left_);
@@ -67,14 +65,9 @@ void __inorder(_NodePtr __x) {
 	cout << ">";
 }
 
-/*
-* 아래 함수는 삽입된 노드의 위치와 삽입 여부를 반환합니다.
-* 예시) 이미 같은 키 값이 존재하는 경우: return std::pair<_NodePtr, bool>(__p, false);
-*/
 template <class _NodePtr, class _Tp>
 pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
-	Node<_Tp>	__p;
-	__p = __root;
+	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
 	while (__p != nullptr) {
@@ -100,8 +93,7 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 */
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
-	Node<_Tp>	__p;
-	__p = __root;
+	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
 	while (__p != nullptr && key != __p.__key_) {
@@ -119,7 +111,8 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 				__q = __p;
 				__p = __p.__left_;
 			}
-		}else {
+		}
+		else {
 			__p = __p.__left_;
 			while (__p.__right_ != nullptr) {
 				__q = __p;
@@ -132,11 +125,13 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 		if (__q == nullptr)					__p = __p.__left_;
 		else if (__q.__left_ == __p)		__q.__left_ = __p.__left_;
 		else								__q.__right_ = __p.__left_;
-	}else if (__p.__right_ != nullptr) {
+	}
+	else if (__p.__right_ != nullptr) {
 		if (__q == nullptr)					__p = __p.__right_;
 		else if (__q.__left_ == __p)		__q.__left_ = __p.__right_;
 		else								__q.__right_ = __p.__right_;
-	}else {
+	}
+	else {
 		if (__q == nullptr)					__p = nullptr;
 		else if (__q.__left_ == __p)		__q.__left_ = nullptr;
 		else								__q.__right_ = nullptr;
@@ -148,8 +143,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
 template <class _NodePtr>
 void __clear(_NodePtr& __x) {
-	Node<size_t> __p;
-	__p = __x;
+	Node<size_t> __p(__x);
 	while (__p != nullptr) {
 		__clear(__p.__left_);
 		delete __p;
@@ -161,55 +155,55 @@ void __clear(_NodePtr& __x) {
 // 아래는 반드시 사용해야하는 BST 클래스입니다.
 template <class _Tp>
 class BST {
-	public: // Member types
-		typedef _Tp						key_type;
-		typedef size_t					size_type;
-		typedef Node<key_type>*			pointer;
-		typedef const Node<key_type>*	const_pointer;
-	
-	private: // Member variables
-		pointer	__root_;
-	
-	public: // Constructor
-		BST(): __root_(nullptr) {}
-	
+public: // Member types
+	typedef _Tp						key_type;
+	typedef size_t					size_type;
+	typedef Node<key_type>* pointer;
+	typedef const Node<key_type>* const_pointer;
+
+private: // Member variables
+	pointer	__root_;
+
+public: // Constructor
+	BST() : __root_(nullptr) {}
+
 	/*
 	* 아래는 반드시 구현해야하는 부분입니다.
 	* 위의 추천드리는 설계 방식을 이용하여 구현하는 것을 추천합니다.
 	* 추전드리는 설계 방식을 이용하지 않고 새로 구현하셔도 무방합니다.
 	*/
 
-	public: // Capacity
-		size_type height() const {
-			return __height(__root_);
-		}
+public: // Capacity
+	size_type height() const {
+		return __height(__root_);
+	}
 
-		size_type size() const {
-			return __size(__root_);
-		}
-	
-	public: // Lookup
-		void inorder() const {
-			__inorder(__root_);
-			cout << endl;
-		}
-		
-	public: // Modifier
-		pair<const_pointer, bool> insert(const key_type& key) {
-			return __insertBST(__root_, key);
-		}
+	size_type size() const {
+		return __size(__root_);
+	}
 
-		const_pointer erase(const key_type& key) {
-			pointer __r = __eraseBST(__root_, key);
+public: // Lookup
+	void inorder() const {
+		__inorder(__root_);
+		cout << endl;
+	}
 
-			delete __r;
+public: // Modifier
+	pair<const_pointer, bool> insert(const key_type& key) {
+		return __insertBST(__root_, key);
+	}
 
-			return __r; 
-		}
+	const_pointer erase(const key_type& key) {
+		pointer __r = __eraseBST(__root_, key);
 
-		void clear() {
-			__clear(__root_);
-		}
+		delete __r;
+
+		return __r;
+	}
+
+	void clear() {
+		__clear(__root_);
+	}
 };
 
 /*
@@ -217,29 +211,29 @@ class BST {
 * 반드시 아래의 main 함수를 사용해야할 필요는 없습니다.
 * ❗️새로 구현하실 경우, 출력 형식에 주의하세요.❗️
 */
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 	BST<int>	tree;
 	char		command;
 	int			key;
 
 	while (cin >> command >> key) {
 		switch ((int)command) {
-			case (int)'i':
-				if (tree.insert(key).second == false) {
-					cerr << "i " << key << ": The key already exists" << endl;
-					continue;
-				}
-				break;
-			case (int)'d':
-				if (tree.erase(key) == nullptr) {
-					cerr << "d " << key << ": The key does not exist" << endl;
-					continue;
-				}
-				break;
-			default:
-				cerr << "Invalid command: " << command << endl;
-				return (1);
-				break;
+		case (int)'i':
+			if (tree.insert(key).second == false) {
+				cerr << "i " << key << ": The key already exists" << endl;
+				continue;
+			}
+			break;
+		case (int)'d':
+			if (tree.erase(key) == nullptr) {
+				cerr << "d " << key << ": The key does not exist" << endl;
+				continue;
+			}
+			break;
+		default:
+			cerr << "Invalid command: " << command << endl;
+			return (1);
+			break;
 		}
 		tree.inorder();
 	}
