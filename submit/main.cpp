@@ -19,6 +19,10 @@ using namespace std;
 template <class _Tp> class Node;
 template <class _Tp> class BST;
 
+/*
+* 아래는 반드시 사용해야하는 Node 클래스입니다.
+* height, size를 제외한 멤버 변수는 추가, 삭제 및 변경이 불가능합니다.
+*/
 template <class _Tp>
 class Node {
 	public: // Member types
@@ -34,6 +38,11 @@ class Node {
 		Node(): __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
 		Node(const __key_type& key): __key_(key), __left_(nullptr), __right_(nullptr) {}
 };
+
+/*
+* 아래 함수들의 설계 방식은 Tree와 Node의 구동부를 구현하기 위해 추천드리는 설계 방식입니다.
+* 반드시 아래의 설계 방식을 따라야 하는 것은 아닙니다.
+*/
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
@@ -73,7 +82,7 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
-	while (__p != nullptr) {
+	while (__p.__key_ != nullptr) {
 		if (key == __p.__key_)	return pair<_NodePtr, bool>(__p, false);
 		__q = __p;
 		if (key < __p.__key_)	__p = __p.__left_;
@@ -143,13 +152,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
 template <class _NodePtr>
 void __clear(_NodePtr& __x) {
-	Node<size_t> __p(__x);
-	while (__p != nullptr) {
-		__clear(__p.__left_);
-		delete __p;
-		__clear(__p.__right_);
-		delete __p;
-	}
+	__x = nullptr;
 }
 
 // 아래는 반드시 사용해야하는 BST 클래스입니다.
