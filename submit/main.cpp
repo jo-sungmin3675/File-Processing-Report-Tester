@@ -19,11 +19,12 @@ class Node {
 	public: // Constructor
 		Node(): __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
 		Node(const __key_type& key): __key_(key), __left_(nullptr), __right_(nullptr) {}
+		Node(Node& root) : __key_(root.__key_), __left_(root.__left_), __right_(root.__right_) {}
 };
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
-	if (__x == nullptr) return 0;
+	if (__x.__key_ == nullptr) return 0;
 	return max(__height(__x.__left_) + 1, __height(__x.__right_) + 1);
 }
 
@@ -36,7 +37,7 @@ unsigned __size(_NodePtr __x) {
 
 template <class _NodePtr>
 void __inorder(_NodePtr __x) {
-	if (__x == nullptr) return;
+	if (__x.__key_ == nullptr) return;
 	cout << "<";
 	__inorder(__x.__left_);
 	cout << __x.__key_;
@@ -49,16 +50,17 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
-	while (__p != nullptr) {
+	while (__p.__key_ != nullptr) {
 		if (key == __p.__key_)	return pair<_NodePtr, bool>(__p, false);
 		__q = __p;
 		if (key < __p.__key_)	__p = __p.__left_;
 		else					__p = __p.__right_;
 	}
 
-	Node<_Tp>	__newNode(key);
+	Node<_Tp>	__newNode(nullptr);
+	__newNode.__key_ = key;
 
-	if (__root == nullptr)		return pair<_NodePtr, bool>(__newNode, true);
+	if (__root.__key_ == nullptr)		return pair<_NodePtr, bool>(__newNode, true);
 	else if (key < __q.__key_)	__q.__left_ = __newNode;
 	else						__q.__right_ = __newNode;
 
@@ -70,13 +72,13 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
-	while (__p != nullptr && key != __p.__key_) {
+	while (__p.__key_ != nullptr && key != __p.__key_) {
 		__q = __p;
 		if (key < __p.__key_)	__p = __p.__left_;
 		else					__p = __p.__right_;
 	}
 
-	if (__p == nullptr) return nullptr;
+	if (__p.__key_ == nullptr) return nullptr;
 
 	if (__p.__left_ != nullptr && __p.__right_ != nullptr) {
 		if (__height(__p.__left_) < __height(__p.__right_) || (__height(__p.__left_) == __height(__p.__right_) && __size(__p.__left_) < __size(__p.__right_))) {
@@ -95,7 +97,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 	}
 
 	if (__p.__left_ != nullptr) {
-		if (__q == nullptr)					__p = __p.__left_;
+		if (__q.__key_ == nullptr)			__p = __p.__left_;
 		else if (__q.__left_ == __p)		__q.__left_ = __p.__left_;
 		else								__q.__right_ = __p.__left_;
 	}else if (__p.__right_ != nullptr) {
@@ -103,7 +105,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 		else if (__q.__left_ == __p)		__q.__left_ = __p.__right_;
 		else								__q.__right_ = __p.__right_;
 	}else {
-		if (__q == nullptr)					__p = nullptr;
+		if (__q.__key_ == nullptr)			__p = nullptr;
 		else if (__q.__left_ == __p)		__q.__left_ = nullptr;
 		else								__q.__right_ = nullptr;
 	}
