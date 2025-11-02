@@ -37,14 +37,16 @@ class Node {
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
-	Node<size_t> __p{ __x };
+	Node<size_t> __p;
+	__p = __x;
 	if (__p == nullptr) return 0;
 	return max(__height(__p.__left_) + 1, __height(__p.__right_) + 1);
 }
 
 template <class _NodePtr>
 unsigned __size(_NodePtr __x) {
-	Node<size_t> __p{__x};
+	Node<size_t> __p;
+	__p = __x;
 	if (__p == nullptr) return 0;
 	return 1 + __size(__p.__left_) + __size(__p.__right_);
 }
@@ -55,7 +57,8 @@ unsigned __size(_NodePtr __x) {
 */
 template <class _NodePtr>
 void __inorder(_NodePtr __x) {
-	Node<size_t> __p{__x};
+	Node<size_t> __p;
+	__p = __x;
 	if (__p == nullptr) return;
 	cout << "<";
 	__inorder(__p.__left_);
@@ -70,10 +73,11 @@ void __inorder(_NodePtr __x) {
 */
 template <class _NodePtr, class _Tp>
 pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
-	Node<_Tp>	__p{__root};
+	Node<_Tp>	__p;
+	__p = __root;
 	Node<_Tp>	__q;
 
-	while (__p.__key_ != nullptr) {
+	while (__p != nullptr) {
 		if (key == __p.__key_)	return pair<_NodePtr, bool>(__p, false);
 		__q = __p;
 		if (key < __p.__key_)	__p = __p.__left_;
@@ -96,7 +100,8 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 */
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
-	Node<_Tp>	__p{__root};
+	Node<_Tp>	__p;
+	__p = __root;
 	Node<_Tp>	__q;
 
 	while (__p != nullptr && key != __p.__key_) {
@@ -143,7 +148,8 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
 template <class _NodePtr>
 void __clear(_NodePtr& __x) {
-	Node<size_t> __p{__x};
+	Node<size_t> __p;
+	__p = __x;
 	while (__p != nullptr) {
 		__clear(__p.__left_);
 		delete __p;
