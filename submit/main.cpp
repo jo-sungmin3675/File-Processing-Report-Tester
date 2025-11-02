@@ -64,6 +64,10 @@ void __inorder(_NodePtr __x) {
 	cout << ">";
 }
 
+/*
+* 아래 함수는 삽입된 노드의 위치와 삽입 여부를 반환합니다.
+* 예시) 이미 같은 키 값이 존재하는 경우: return std::pair<_NodePtr, bool>(__p, false);
+*/
 template <class _NodePtr, class _Tp>
 pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 	Node<_Tp>	__p(__root);
