@@ -1,17 +1,3 @@
-/*
-* File Processing Report 2024 - Binary Search Tree skeleton code in C/C++
-*
-* 본 Skeleton code는 구현에 도움을 주기 위해 작성된 코드입니다.
-* ❗️본 Skeleton code는 과제의 요구 조건을 완전히 충족시키지 않을 수 있습니다.❗️
-* ❗️최종 점수 산정은 과제 PDF에 명시된 요구 사항을 기준으로 이루어집니다.❗️
-*
-* 미리 말씀드리면, skeleton code가 다소 어려울 수 있습니다.
-* C++ 스러운 코딩 스타일과 코드 설계 방식에 관한 고찰이 담겨있으니, 충분한 시간을 들여 분석해보시기 바랍니다.
-* 또, 재사용성을 고려하여 설계된 코드인 만큼 처음에는 이해하기 어려울 수 있습니다.
-* 이후 AVL-Tree, B-Tree 과제에서도 그대로 사용되니, 이번 BST에서 잘 이해하고 넘어가시길 바랍니다.
-*
-*/
-
 #include <iostream>
 #include <stack>
 using namespace std;
@@ -37,6 +23,14 @@ class Node {
 	public: // Constructor
 		Node(): __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
 		Node(const __key_type& key): __key_(key), __left_(nullptr), __right_(nullptr) {}
+
+	/*
+	* 아래는 inorder traversal을 대체할 수 있는 operator<< 입니다.
+	* 반드시 아래의 함수를 사용해야할 필요는 없습니다.
+	*/
+	friend ostream& operator<<(ostream& os, const __node_pointer_type& np) {
+		// write your own code here
+	}
 };
 
 /*
@@ -46,16 +40,14 @@ class Node {
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
-	Node<size_t> __p(__x);
-	if (__p == nullptr) return 0;
-	return max(__height(__p.__left_) + 1, __height(__p.__right_) + 1);
+	if (__x == nullptr) return 0;
+	return max(__height(__x.__left_) + 1, __height(__x.__right_) + 1);
 }
 
 template <class _NodePtr>
 unsigned __size(_NodePtr __x) {
-	Node<size_t> __p(__x);
-	if (__p == nullptr) return 0;
-	return 1 + __size(__p.__left_) + __size(__p.__right_);
+	if (__x.__key_ == nullptr) return 0;
+	return 1 + __size(__x.__left_) + __size(__x.__right_);
 }
 
 /*
@@ -64,12 +56,11 @@ unsigned __size(_NodePtr __x) {
 */
 template <class _NodePtr>
 void __inorder(_NodePtr __x) {
-	Node<size_t> __p(__x);
-	if (__p == nullptr) return;
+	if (__x == nullptr) return;
 	cout << "<";
-	__inorder(__p.__left_);
-	cout << __p.__key_;
-	__inorder(__p.__right_);
+	__inorder(__x.__left_);
+	cout << __x.__key_;
+	__inorder(__x.__right_);
 	cout << ">";
 }
 
@@ -82,7 +73,7 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 	Node<_Tp>	__p(__root);
 	Node<_Tp>	__q;
 
-	while (__p.__key_ != nullptr) {
+	while (__p != nullptr) {
 		if (key == __p.__key_)	return pair<_NodePtr, bool>(__p, false);
 		__q = __p;
 		if (key < __p.__key_)	__p = __p.__left_;
