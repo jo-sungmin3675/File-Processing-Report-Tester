@@ -66,8 +66,8 @@ pair<_NodePtr, bool> __insertBST(_NodePtr& __root, const _Tp& key) {
 
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
-	_NodePtr	__p = __root;
-	_NodePtr	__q = nullptr;
+	_NodePtr __p = __root;
+	_NodePtr __q = nullptr;
 
 	while (__p != nullptr && key != __p->__key_) {
 		__q = __p;
@@ -78,6 +78,8 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 	if (__p == nullptr) return nullptr;
 
 	if (__p->__left_ != nullptr && __p->__right_ != nullptr) {
+		_NodePtr tempNode = __p;
+
 		if (__height(__p->__left_) < __height(__p->__right_) || (__height(__p->__left_) == __height(__p->__right_) && __size(__p->__left_) < __size(__p->__right_))) {
 			__p = __p->__right_;
 			while (__p->__left_ != nullptr) {
@@ -91,6 +93,8 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 				__p = __p->__right_;
 			}
 		}
+
+		tempNode->__key_ = __p->__key_;
 	}
 
 	if (__p->__left_ != nullptr) {
@@ -161,7 +165,7 @@ class BST {
 		const_pointer erase(const key_type& key) {
 			pointer __r = __eraseBST(__root_, key);
 
-			if (__r != nullptr )delete __r;
+			if (__r != nullptr ) delete __r;
 
 			return __r; 
 		}
