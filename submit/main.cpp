@@ -66,8 +66,9 @@ pair<_NodePtr, bool> __insertBST(_NodePtr& __root, const _Tp& key) {
 
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
-	_NodePtr __p = __root;
-	_NodePtr __q = nullptr;
+	_NodePtr __p		= __root;
+	_NodePtr __q		= nullptr;
+	_NodePtr tempNode	= nullptr;
 
 	while (__p != nullptr && key != __p->__key_) {
 		__q = __p;
@@ -77,8 +78,9 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 
 	if (__p == nullptr) return nullptr;
 
+	tempNode = __p;
 	if (__p->__left_ != nullptr && __p->__right_ != nullptr) {
-		_NodePtr tempNode = __p;
+		tempNode = __p;
 
 		if (__height(__p->__left_) < __height(__p->__right_) || (__height(__p->__left_) == __height(__p->__right_) && __size(__p->__left_) < __size(__p->__right_))) {
 			__p = __p->__right_;
@@ -111,7 +113,9 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 		else								__q->__right_ = nullptr;
 	}
 
-	return __p;
+	delete __p;
+
+	return tempNode;
 }
 
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
@@ -164,8 +168,6 @@ class BST {
 
 		const_pointer erase(const key_type& key) {
 			pointer __r = __eraseBST(__root_, key);
-
-			if (__r != nullptr ) delete __r;
 
 			return __r; 
 		}
