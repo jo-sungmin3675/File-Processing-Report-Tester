@@ -23,24 +23,24 @@ class Node {
 
 template <class _NodePtr>
 unsigned __height(_NodePtr __x) {
-	if (__x.__key_ == nullptr) return 0;
-	return max(__height(__x.__left_) + 1, __height(__x.__right_) + 1);
+	if (__x == nullptr) return 0;
+	return max(__height(__x->__left_) + 1, __height(__x->__right_) + 1);
 }
 
 template <class _NodePtr>
 unsigned __size(_NodePtr __x) {
-	if (__x.__key_ == nullptr) return 0;
-	return 1 + __size(__x.__left_) + __size(__x.__right_);
+	if (__x == nullptr) return 0;
+	return 1 + __size(__x->__left_) + __size(__x->__right_);
 }
 
 
 template <class _NodePtr>
 void __inorder(_NodePtr __x) {
-	if (__x.__key_ == nullptr) return;
+	if (__x == nullptr) return;
 	cout << "<";
-	__inorder(__x.__left_);
-	cout << __x.__key_;
-	__inorder(__x.__right_);
+	__inorder(__x->__left_);
+	cout << __x->__key_;
+	__inorder(__x->__right_);
 	cout << ">";
 }
 
@@ -76,7 +76,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 
 	while (__p != nullptr && key != __p->__key_) {
 		__q = __p;
-		if (key < __p.__key_)	__p = __p->__left_;
+		if (key < __p->__key_)	__p = __p->__left_;
 		else					__p = __p->__right_;
 	}
 
