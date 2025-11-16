@@ -39,7 +39,7 @@ void __inorder(_NodePtr __x) {
 	if (__x == nullptr) return;
 	cout << "<";
 	__inorder(__x->__left_);
-	cout << __x->__key_;
+	cout << " " << __x->__key_ << " ";
 	__inorder(__x->__right_);
 	cout << ">";
 }
