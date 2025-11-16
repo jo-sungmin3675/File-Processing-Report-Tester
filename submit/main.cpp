@@ -19,7 +19,6 @@ class Node {
 	public: // Constructor
 		Node(): __key_(__key_type()), __left_(nullptr), __right_(nullptr) {}
 		Node(const __key_type& key): __key_(key), __left_(nullptr), __right_(nullptr) {}
-		Node(Node& root) : __key_(root.__key_), __left_(root.__left_), __right_(root.__right_) {}
 };
 
 template <class _NodePtr>
@@ -47,67 +46,70 @@ void __inorder(_NodePtr __x) {
 
 template <class _NodePtr, class _Tp>
 pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
-	Node<_Tp>	__p(__root);
-	Node<_Tp>	__q;
-
-	while (__p.__key_ != nullptr) {
-		if (key == __p.__key_)	return pair<_NodePtr, bool>(__p, false);
-		__q = __p;
-		if (key < __p.__key_)	__p = __p.__left_;
-		else					__p = __p.__right_;
+	if (__root == nullptr) {
+		__root = new Node<_Tp>(key);
+		return make_pair(__root, true);
 	}
 
-	Node<_Tp>	__newNode(nullptr);
-	__newNode.__key_ = key;
+	_NodePtr __p = __root;
+	_NodePtr __q;
 
-	if (__root.__key_ == nullptr)		return pair<_NodePtr, bool>(__newNode, true);
-	else if (key < __q.__key_)	__q.__left_ = __newNode;
-	else						__q.__right_ = __newNode;
+	while (__p != nullptr) {
+		__q = __p;
+		if (key == __p->__key_)		return pair<_NodePtr, bool>(__p, false);
+		else if (key < __p->__key_)	__p = __p->__left_;
+		else						__p = __p->__right_;
+	}
 
-	return pair<_NodePtr, bool>(__root, true);
+	_NodePtr __newNode = new Node<_Tp>(key);
+
+	if (key < __q->__key_)		__q->__left_ = __newNode;
+	else						__q->__right_ = __newNode;
+
+	return make_pair(__newNode, true);
 }
 
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
-	Node<_Tp>	__p(__root);
-	Node<_Tp>	__q;
+	_NodePtr	__p = __root;
+	_NodePtr	__q;
 
-	while (__p.__key_ != nullptr && key != __p.__key_) {
+	while (__p != nullptr && key != __p->__key_) {
 		__q = __p;
-		if (key < __p.__key_)	__p = __p.__left_;
-		else					__p = __p.__right_;
+		if (key < __p.__key_)	__p = __p->__left_;
+		else					__p = __p->__right_;
 	}
 
-	if (__p.__key_ == nullptr) return nullptr;
+	if (__p == nullptr) return nullptr;
 
-	if (__p.__left_ != nullptr && __p.__right_ != nullptr) {
-		if (__height(__p.__left_) < __height(__p.__right_) || (__height(__p.__left_) == __height(__p.__right_) && __size(__p.__left_) < __size(__p.__right_))) {
-			__p = __p.__right_;
-			while (__p.__left_ != nullptr) {
+	if (__p->__left_ != nullptr && __p->__right_ != nullptr) {
+		if (__height(__p->__left_) < __height(__p->__right_) || (__height(__p->__left_) == __height(__p->__right_) && __size(__p->__left_) < __size(__p->__right_))) {
+			__p = __p->__right_;
+			while (__p->__left_ != nullptr) {
 				__q = __p;
-				__p = __p.__left_;
+				__p = __p->__left_;
 			}
 		}else {
-			__p = __p.__left_;
-			while (__p.__right_ != nullptr) {
+			__p = __p->__left_;
+			while (__p->__right_ != nullptr) {
 				__q = __p;
-				__p = __p.__right_;
+				__p = __p->__right_;
 			}
 		}
 	}
 
-	if (__p.__left_ != nullptr) {
-		if (__q.__key_ == nullptr)			__p = __p.__left_;
-		else if (__q.__left_ == __p)		__q.__left_ = __p.__left_;
-		else								__q.__right_ = __p.__left_;
-	}else if (__p.__right_ != nullptr) {
-		if (__q == nullptr)					__p = __p.__right_;
-		else if (__q.__left_ == __p)		__q.__left_ = __p.__right_;
-		else								__q.__right_ = __p.__right_;
+	if (__p->__left_ != nullptr) {
+		if (__q == nullptr)					__p = __p->__left_;
+		else if (__q->__left_ == __p)		__q->__left_ = __p->__left_;
+		else								__q->__right_ = __p->__left_;
+	}else if (__p->__right_ != nullptr) {
+		if (__q == nullptr)					__p = __p->__right_;
+		else if (__q->__left_ == __p)		__q->__left_ = __p->__right_;
+		else								__q->__right_ = __p->__right_;
 	}else {
-		if (__q.__key_ == nullptr)			__p = nullptr;
-		else if (__q.__left_ == __p)		__q.__left_ = nullptr;
-		else								__q.__right_ = nullptr;
+		if (__q == nullptr)					__p = nullptr;
+		else if (__q->__left_ == __p)		__q->__left_ = nullptr;
+		else								__q->__right_ = nullptr;
 	}
 
 	return __p;
@@ -116,6 +118,13 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
 template <class _NodePtr>
 void __clear(_NodePtr& __x) {
+	if (__x == nullptr) return;
+
+	__clear(__x->__left_);
+	__clear(__x->__right_);
+
+	delete __x;
+
 	__x = nullptr;
 }
 
@@ -157,7 +166,7 @@ class BST {
 		const_pointer erase(const key_type& key) {
 			pointer __r = __eraseBST(__root_, key);
 
-			delete __r;
+			if (__r != nullptr )delete __r;
 
 			return __r; 
 		}
