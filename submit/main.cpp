@@ -45,14 +45,9 @@ void __inorder(_NodePtr __x) {
 }
 
 template <class _NodePtr, class _Tp>
-pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
-	if (__root == nullptr) {
-		__root = new Node<_Tp>(key);
-		return make_pair(__root, true);
-	}
-
+pair<_NodePtr, bool> __insertBST(_NodePtr& __root, const _Tp& key) {
 	_NodePtr __p = __root;
-	_NodePtr __q;
+	_NodePtr __q = nullptr;
 
 	while (__p != nullptr) {
 		__q = __p;
@@ -62,17 +57,17 @@ pair<_NodePtr, bool> __insertBST(_NodePtr __root, const _Tp& key) {
 	}
 
 	_NodePtr __newNode = new Node<_Tp>(key);
-
-	if (key < __q->__key_)		__q->__left_ = __newNode;
+	if (__root == nullptr) __root = __newNode;
+	else if (key < __q->__key_)	__q->__left_ = __newNode;
 	else						__q->__right_ = __newNode;
 
-	return make_pair(__newNode, true);
+	return pair<_NodePtr, bool>(__root, true);
 }
 
 template <class _NodePtr, class _Tp>
 _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 	_NodePtr	__p = __root;
-	_NodePtr	__q;
+	_NodePtr	__q = nullptr;
 
 	while (__p != nullptr && key != __p->__key_) {
 		__q = __p;
@@ -99,15 +94,15 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 	}
 
 	if (__p->__left_ != nullptr) {
-		if (__q == nullptr)					__p = __p->__left_;
+		if (__q == nullptr)					__root = __root->__left_;
 		else if (__q->__left_ == __p)		__q->__left_ = __p->__left_;
 		else								__q->__right_ = __p->__left_;
 	}else if (__p->__right_ != nullptr) {
-		if (__q == nullptr)					__p = __p->__right_;
+		if (__q == nullptr)					__root = __root->__right_;
 		else if (__q->__left_ == __p)		__q->__left_ = __p->__right_;
 		else								__q->__right_ = __p->__right_;
 	}else {
-		if (__q == nullptr)					__p = nullptr;
+		if (__q == nullptr)					__root = nullptr;
 		else if (__q->__left_ == __p)		__q->__left_ = nullptr;
 		else								__q->__right_ = nullptr;
 	}
