@@ -80,15 +80,15 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 
 	tempNode = __p;
 	if (__p->__left_ != nullptr && __p->__right_ != nullptr) {
-		tempNode = __p;
-
 		if (__height(__p->__left_) < __height(__p->__right_) || (__height(__p->__left_) == __height(__p->__right_) && __size(__p->__left_) < __size(__p->__right_))) {
+			__q = __p;
 			__p = __p->__right_;
 			while (__p->__left_ != nullptr) {
 				__q = __p;
 				__p = __p->__left_;
 			}
 		}else {
+			__q = __p;
 			__p = __p->__left_;
 			while (__p->__right_ != nullptr) {
 				__q = __p;
@@ -115,7 +115,7 @@ _NodePtr __eraseBST(_NodePtr& __root, const _Tp& key) {
 
 	delete __p;
 
-	return tempNode;
+	return __p;
 }
 
 // Dangling pointer를 방지하기 위해 __x를 참조 타입으로 받도록 설계하였습니다.
@@ -168,7 +168,6 @@ class BST {
 
 		const_pointer erase(const key_type& key) {
 			pointer __r = __eraseBST(__root_, key);
-
 			return __r; 
 		}
 
